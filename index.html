@@ -3,85 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cartão Pro — Gerador de Cartão de Visita e Identidade Visual</title>
-<meta name="description" content="Crie grátis um cartão de visita profissional com QR Code real do WhatsApp, cores da sua marca e identidade visual. Sem cadastro.">
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<meta name="theme-color" content="#171321">
+<title>Cartão Pro — Estúdio de Cartões Profissionais</title>
+<meta name="description" content="Crie cartões digitais clicáveis e cartões para impressão com modelos profissionais por atividade.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-<header>
-<h1>Cartão Pro</h1>
-<p>Cartão de visita profissional + identidade visual, em segundos e sem complicação.</p>
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Cartão Pro início"><span class="brand-mark">CP</span><span>Cartão <b>Pro</b><small>ESTÚDIO PROFISSIONAL</small></span></a>
+  <div class="top-actions"><span class="saved" id="saveStatus">Rascunho local</span><button class="btn btn-quiet" id="undoBtn" type="button" title="Desfazer">↶</button><button class="btn btn-quiet" id="redoBtn" type="button" title="Refazer">↷</button></div>
 </header>
-<main>
-<section class="card">
-<h3>1. Seus Dados</h3>
-<label for="nome">Seu Nome / Nome do Negócio:</label>
-<input type="text" id="nome" maxlength="60" placeholder="Ex.: João da Silva - Pedreiro" oninput="onField('nome',this.value)">
-<label for="subtitulo">Slogan ou Ramo de Atuação:</label>
-<input type="text" id="subtitulo" maxlength="60" placeholder="Ex.: Reformas e Construção em Geral" oninput="onField('sub',this.value)">
-<label for="telefone">WhatsApp para Contato:</label>
-<input type="text" id="telefone" maxlength="16" placeholder="Ex.: (11) 99999-8888" oninput="onTel(this)">
-<label for="instagram">Instagram ou Redes (Opcional):</label>
-<input type="text" id="instagram" maxlength="40" placeholder="Ex.: @joao.reformas" oninput="onField('insta',this.value)">
-</section>
-
-<section class="card">
-<h3>2. Identidade da sua Marca</h3>
-<label>Seu ramo (sugere cores profissionais):</label>
-<div class="chips" id="chips"></div>
-<label>Ícone do seu negócio:</label>
-<div class="icon-grid" id="iconGrid"></div>
-<label class="check"><input type="checkbox" id="qrOn" onchange="onQR(this.checked)"> Incluir QR Code real do WhatsApp no cartão</label>
-<h3>Cores (ajuste fino):</h3>
-<div class="color-grid">
-<div><label for="corFundo">Fundo:</label><input type="color" id="corFundo" value="#26352d" oninput="onColor('fundo',this.value)"></div>
-<div><label for="corTexto">Texto:</label><input type="color" id="corTexto" value="#ffffff" oninput="onColor('texto',this.value)"></div>
-<div><label for="corDestaque">Destaque:</label><input type="color" id="corDestaque" value="#806322" oninput="onColor('destaque',this.value)"></div>
-</div>
-<div id="contrastWarn" class="warn" style="display:none"></div>
-<div class="identity">
-<label>Sua identidade visual (toque para copiar o código):</label>
-<div class="swatches">
-<button type="button" class="swatch" id="sw-fundo" onclick="copyHex('fundo')"></button>
-<button type="button" class="swatch" id="sw-texto" onclick="copyHex('texto')"></button>
-<button type="button" class="swatch" id="sw-destaque" onclick="copyHex('destaque')"></button>
-</div>
-</div>
-</section>
-
-<section class="card result-card">
-<h3>Pré-visualização do Cartão</h3>
-<div class="canvas-wrapper"><canvas id="cartaoCanvas" width="1600" height="900"></canvas></div>
-<button class="primary-btn" onclick="baixarCartao()">Baixar Cartão em Alta Resolução (.PNG)</button>
-</section>
-
-<details class="card">
-<summary><b>Como usar & Glossário simples</b></summary>
-<div class="help-section">
-<h4>Como usar:</h4>
-<ol>
-<li><b>Preencha as informações:</b> Digite seu nome, profissão e contatos.</li>
-<li><b>Escolha seu ramo:</b> As cores profissionais aparecem sozinhas; faça ajuste fino se quiser.</li>
-<li><b>Ative o QR Code:</b> Quem escanear o cartão cai direto no seu WhatsApp.</li>
-<li><b>Baixe a arte:</b> Imagem em alta resolução, pronta para celular e impressão.</li>
-</ol>
-<hr>
-<h4>Glossário (Sua Identidade Visual):</h4>
-<ul>
-<li><b>Identidade Visual:</b> É o conjunto de cores e estilo que faz as pessoas lembrarem da sua empresa.</li>
-<li><b>Cor de Destaque:</b> Uma cor forte usada em detalhes (linhas, bordas) para chamar a atenção do cliente.</li>
-<li><b>QR Code:</b> Código quadrado que a câmera do celular lê e abre seu WhatsApp na hora.</li>
-<li><b>Contraste:</b> Diferença entre texto e fundo. Contraste baixo = cartão ilegível. O aviso amarelo te protege disso.</li>
-<li><b>Formato PNG:</b> Imagem de alta qualidade que não fica embaçada no celular nem na impressão.</li>
-<li><b>Memória local:</b> Seus dados ficam guardados neste aparelho. Pode fechar e voltar depois que tudo continua lá.</li>
-</ul>
-</div>
-</details>
+<main class="workspace">
+  <aside class="editor">
+    <div class="intro"><p class="eyebrow">CRIADOR DE IDENTIDADE</p><h1>Seu cartão.<br><em>Sua presença.</em></h1><p>Escolha um modelo profissional e personalize os detalhes.</p></div>
+    <section class="panel">
+      <div class="section-head"><span class="step">01</span><div><h2>Modelo profissional</h2><p>Comece pela sua atividade</p></div></div>
+      <label for="profession">Profissão ou segmento</label>
+      <select id="profession">
+        <option value="geral">Outro / Personalizado</option><option value="pastor">Pastor ou ministério evangélico</option><option value="entregador">Moto entregador</option><option value="costureira">Costureira ou alfaiate</option><option value="barbeiro">Barbeiro ou barbearia</option><option value="manicure">Manicure / Nail designer</option><option value="cabeleireiro">Cabeleireiro / Salão</option><option value="fotografo">Fotógrafo</option><option value="advogado">Advogado</option><option value="medico">Médico / Saúde</option><option value="eletricista">Eletricista</option><option value="pedreiro">Pedreiro / Construção</option><option value="professor">Professor / Instrutor</option><option value="mecanico">Mecânico</option><option value="limpeza">Limpeza e conservação</option><option value="personal">Personal trainer</option><option value="loja">Loja / Comércio</option><option value="designer">Designer / Marketing</option>
+      </select>
+      <div class="template-note" id="templateNote">Modelo neutro e adaptável para sua atividade.</div>
+    </section>
+    <section class="panel">
+      <div class="section-head"><span class="step">02</span><div><h2>Informações</h2><p>Os dados que aparecem no cartão</p></div></div>
+      <label for="name">Nome ou nome comercial</label><input id="name" maxlength="60" placeholder="Ex.: João da Silva">
+      <label for="role">Profissão / especialidade</label><input id="role" maxlength="80" placeholder="Ex.: Atendimento e serviços">
+      <label for="tagline">Frase de apresentação</label><input id="tagline" maxlength="100" placeholder="Ex.: Qualidade, confiança e compromisso">
+      <div class="two"><div><label for="phone">WhatsApp</label><input id="phone" inputmode="tel" maxlength="20" placeholder="(11) 99999-9999"></div><div><label for="email">E-mail</label><input id="email" type="email" maxlength="100" placeholder="voce@email.com"></div></div>
+      <label for="instagram">Instagram</label><input id="instagram" maxlength="80" placeholder="@seuperfil ou link">
+      <label for="website">Site / outro link</label><input id="website" maxlength="120" placeholder="www.seusite.com.br">
+      <label for="address">Endereço ou área atendida</label><input id="address" maxlength="120" placeholder="Cidade, bairro ou região">
+    </section>
+    <section class="panel">
+      <div class="section-head"><span class="step">03</span><div><h2>Imagem e formato</h2><p>Use sua foto, logo ou imagem de trabalho</p></div></div>
+      <label for="photo">Foto ou logotipo</label><input id="photo" type="file" accept="image/*">
+      <div class="inline-actions"><button class="btn btn-outline" id="cameraBtn" type="button">Abrir câmera</button><button class="btn btn-text" id="removePhoto" type="button">Remover imagem</button></div>
+      <video id="camera" autoplay playsinline hidden></video><button class="btn btn-primary" id="captureBtn" type="button" hidden>Capturar foto</button>
+      <label>Posição da imagem</label><div class="choice-row" id="photoPositions"><button data-position="left" class="choice active">Esquerda</button><button data-position="right" class="choice">Direita</button><button data-position="top" class="choice">Superior</button><button data-position="center" class="choice">Centro</button></div>
+      <label>Formato do cartão</label><div class="shape-grid" id="shapes"><button data-shape="horizontal" class="shape active">Horizontal</button><button data-shape="vertical" class="shape">Vertical</button><button data-shape="triangle" class="shape">Triangular</button><button data-shape="hexagon" class="shape">Hexagonal</button><button data-shape="free" class="shape">Livre</button></div>
+    </section>
+    <section class="panel">
+      <div class="section-head"><span class="step">04</span><div><h2>Identidade visual</h2><p>Cores e tipografia</p></div></div>
+      <div class="color-fields"><div><label for="bgColor">Fundo</label><input id="bgColor" type="color" value="#20202a"></div><div><label for="textColor">Texto</label><input id="textColor" type="color" value="#ffffff"></div><div><label for="accentColor">Destaque</label><input id="accentColor" type="color" value="#c9a66b"></div></div>
+      <label for="fontStyle">Tipografia</label><select id="fontStyle"><option value="modern">Moderna</option><option value="classic">Clássica</option><option value="editorial">Editorial</option></select>
+    </section>
+    <section class="panel back-editor">
+      <div class="section-head"><span class="step">05</span><div><h2>Editor independente do verso</h2><p>Personalize o outro lado sem alterar a frente</p></div></div>
+      <label for="backTitle">Título do verso</label><input id="backTitle" maxlength="70" placeholder="Ex.: Vamos conversar?">
+      <label for="backMessage">Mensagem principal</label><textarea id="backMessage" rows="3" maxlength="240" placeholder="Escreva uma mensagem, diferenciais ou apresentação complementar."></textarea>
+      <label for="backExtra">Informação complementar</label><input id="backExtra" maxlength="120" placeholder="Ex.: Atendimento com hora marcada">
+      <label for="backLayout">Composição do verso</label><select id="backLayout"><option value="editorial">Editorial</option><option value="minimal">Minimalista</option><option value="contact">Contatos em destaque</option><option value="brand">Assinatura da marca</option></select>
+      <div class="color-fields"><div><label for="backBg">Fundo do verso</label><input id="backBg" type="color" value="#171321"></div><div><label for="backText">Texto do verso</label><input id="backText" type="color" value="#ffffff"></div><div><label for="backAccent">Destaque do verso</label><input id="backAccent" type="color" value="#c9a66b"></div></div>
+      <p class="hint">O verso tem cores, texto e estilo próprios. As alterações não modificam a frente do cartão.</p>
+    </section>
+    <section class="panel">
+      <div class="section-head"><span class="step">06</span><div><h2>Voz e trilha opcional</h2><p>Uma apresentação pessoal, sem obrigatoriedade</p></div></div>
+      <p class="hint">Grave uma mensagem curta ou selecione um áudio seu. A reprodução só começa quando a pessoa tocar no cartão.</p>
+      <div class="inline-actions"><button class="btn btn-outline" id="recordBtn" type="button">● Gravar voz</button><button class="btn btn-text" id="stopRecordBtn" type="button" disabled>Parar gravação</button></div>
+      <audio id="voicePreview" controls hidden></audio>
+      <label for="musicFile">Música / trilha (arquivo próprio ou licenciado)</label><input id="musicFile" type="file" accept="audio/*">
+      <label for="introText">Texto da apresentação</label><textarea id="introText" rows="2" maxlength="180" placeholder="Olá! Será um prazer atender você."></textarea>
+      <p class="hint small">O áudio é opcional. Use somente músicas que você tenha direito de utilizar.</p>
+    </section>
+    <section class="panel export-panel">
+      <div class="section-head"><span class="step">07</span><div><h2>Publicar e exportar</h2><p>Digital clicável ou arquivo para impressão</p></div></div>
+      <div class="export-grid"><button id="downloadHtml" class="btn btn-primary" type="button">Baixar cartão digital HTML</button><button id="downloadVcf" class="btn btn-outline" type="button">Salvar contato (vCard)</button><button id="printBtn" class="btn btn-outline" type="button">Imprimir / PDF</button><button id="shareBtn" class="btn btn-outline" type="button">Compartilhar</button></div>
+    </section>
+  </aside>
+  <section class="preview-area">
+    <div class="preview-toolbar"><div><span class="eyebrow">VISUALIZAÇÃO AO VIVO</span><h2>Prévia do seu cartão</h2></div><div class="tabs"><button class="tab active" data-mode="digital">Digital</button><button class="tab" data-mode="verso">Verso</button><button class="tab" data-mode="print">Impressão</button></div></div>
+    <div class="preview-stage" id="previewStage">
+      <article class="business-card shape-horizontal" id="businessCard">
+        <div class="card-image-wrap" id="imageWrap"><img id="previewImage" alt="Imagem do profissional" hidden></div>
+        <div class="card-copy"><div class="card-kicker" id="previewRole">SUA PROFISSÃO</div><h2 id="previewName">Seu Nome</h2><p class="card-tagline" id="previewTagline">Sua apresentação profissional</p><div class="card-rule"></div><div class="card-links" id="previewLinks"></div><div class="card-location" id="previewAddress"></div><div class="audio-link" id="audioLink" hidden>▶ Ouvir apresentação</div></div>
+        <div class="card-mark" id="cardMark">CP</div>
+      </article>
+      <article class="business-card print-back back-layout-editorial" id="printBack"><div class="back-art" aria-hidden="true"></div><div class="card-copy"><div class="card-kicker" id="backKicker">SEU NEGÓCIO</div><h2 id="backName">Seu Nome</h2><p class="back-message" id="backMessagePreview"></p><div class="card-rule"></div><div class="card-links" id="backLinks"></div><div class="card-location" id="backAddress"></div><p class="back-extra" id="backExtraPreview"></p></div><div class="back-monogram" id="backMonogram">CP</div></article>
+      <p class="preview-caption" id="previewCaption">Prévia do cartão digital — os contatos são clicáveis no arquivo exportado.</p>
+    </div>
+    <div class="preview-foot"><span>Prévia adaptável</span><span>Seus dados ficam neste aparelho durante a edição.</span></div>
+  </section>
 </main>
-</div>
-<div id="toast" class="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,188 +1,99 @@
-/* Cartão Pro v2 — tudo roda no aparelho do usuário, nada sai dele */
-var canvas = document.getElementById('cartaoCanvas');
-var ctx = canvas.getContext('2d');
-var W = canvas.width, H = canvas.height;
-var LS_KEY = 'cartaoPro_v2';
-function $(id) { return document.getElementById(id) }
-
-var STATE = { nome:'', sub:'', tel:'', insta:'', fundo:'#26352d', texto:'#ffffff', destaque:'#806322', icone:'chave', qr:true, niche:'geral' };
-try { var raw = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); if (raw && typeof raw === 'object') STATE = Object.assign(STATE, raw); } catch (e) {}
-function saveState() { try { localStorage.setItem(LS_KEY, JSON.stringify(STATE)) } catch (e) {} }
-
-/* ---------- ÍCONES PROFISSIONAIS (traço) ---------- */
-var ICONS = {
-chave:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
-casa:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
-tesoura:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/>',
-cafe:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/>',
-talheres:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
-camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
-pincel:'<path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/>',
-sacola:'<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
-folha:'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
-pata:'<circle cx="4.5" cy="9.5" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><circle cx="19.5" cy="9.5" r="2"/><path d="M12 10c-2.5 0-4.6 2-5.6 4-.8 1.6-.2 3.5 1.3 4.3.9.5 2 .5 2.9.1.9-.4 1.9-.4 2.8 0 .9.4 2 .4 2.9-.1 1.5-.8 2.1-2.7 1.3-4.3-1-2-3.1-4-5.6-4z"/>',
-estrela:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
-raio:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
-coracao:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
-caminhao:'<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
-laptop:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/>',
-flor:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="5" r="2.5"/><circle cx="19" cy="9" r="2.5"/><circle cx="17" cy="17" r="2.5"/><circle cx="7" cy="17" r="2.5"/><circle cx="5" cy="9" r="2.5"/>',
-telefone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
-globo:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
+/* Cartão Pro Studio — editor local-first */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const fields=['name','role','tagline','phone','email','instagram','website','address','introText','profession','bgColor','textColor','accentColor','fontStyle','backTitle','backMessage','backExtra','backLayout','backBg','backText','backAccent'];
+const profiles={
+geral:{label:'Modelo versátil',role:'Atendimento profissional',tag:'Qualidade e compromisso em cada detalhe.',colors:['#20202a','#ffffff','#c9a66b'],mark:'CP'},
+pastor:{label:'Comunicação pastoral',role:'Pastor | Ministério',tag:'Fé, acolhimento e propósito.',colors:['#211b2c','#fffaf0','#c7a56b'],mark:'✦'},
+entregador:{label:'Serviço de entregas',role:'Moto entregador',tag:'Agilidade, cuidado e pontualidade.',colors:['#18252b','#ffffff','#e0a52d'],mark:'MOTO'},
+costureira:{label:'Ateliê e confecção',role:'Costura e ajustes',tag:'Cuidado em cada ponto, atenção em cada detalhe.',colors:['#342536','#fff8f4','#d9a5ae'],mark:'ATELIÊ'},
+barbeiro:{label:'Barbearia contemporânea',role:'Barbeiro profissional',tag:'Estilo, técnica e personalidade.',colors:['#17191d','#f5f2eb','#c39b5b'],mark:'BARBER'},
+manicure:{label:'Beleza e nail design',role:'Manicure | Nail designer',tag:'Detalhes que valorizam seu estilo.',colors:['#392632','#fff8fa','#d79aaa'],mark:'NAIL'},
+cabeleireiro:{label:'Salão e beleza',role:'Cabeleireiro profissional',tag:'Beleza com identidade e cuidado.',colors:['#30212c','#fff8f5','#cba07a'],mark:'STUDIO'},
+fotografo:{label:'Fotografia autoral',role:'Fotógrafo',tag:'Histórias contadas em imagens.',colors:['#17191e','#ffffff','#c8b89b'],mark:'PHOTO'},
+advogado:{label:'Escritório jurídico',role:'Advocacia',tag:'Atuação ética, técnica e responsável.',colors:['#172536','#ffffff','#bda77e'],mark:'OAB'},
+medico:{label:'Saúde e atendimento',role:'Profissional de saúde',tag:'Cuidado, atenção e compromisso.',colors:['#e9f1f1','#243c43','#3d8c88'],mark:'CARE'},
+eletricista:{label:'Serviços técnicos',role:'Eletricista',tag:'Instalação, manutenção e segurança.',colors:['#1d2833','#ffffff','#e6ad36'],mark:'ENERGIA'},
+pedreiro:{label:'Construção e reformas',role:'Pedreiro | Reformas',tag:'Serviço bem feito do início ao acabamento.',colors:['#252a30','#ffffff','#d99a46'],mark:'OBRAS'},
+professor:{label:'Educação e conhecimento',role:'Professor | Instrutor',tag:'Conhecimento que transforma.',colors:['#1d2b35','#ffffff','#83b3b0'],mark:'EDU'},
+mecanico:{label:'Oficina e manutenção',role:'Mecânico',tag:'Diagnóstico preciso e serviço de confiança.',colors:['#20242b','#ffffff','#d27c45'],mark:'GARAGE'},
+limpeza:{label:'Limpeza profissional',role:'Limpeza e conservação',tag:'Ambientes cuidados com excelência.',colors:['#18333a','#ffffff','#79b7b0'],mark:'CLEAN'},
+personal:{label:'Treinamento e performance',role:'Personal trainer',tag:'Evolução com orientação e consistência.',colors:['#17251e','#ffffff','#a8c56b'],mark:'FIT'},
+loja:{label:'Comércio e varejo',role:'Atendimento e vendas',tag:'Produtos e atendimento de qualidade.',colors:['#25202b','#ffffff','#c8a4d5'],mark:'STORE'},
+designer:{label:'Estúdio criativo',role:'Design e comunicação',tag:'Ideias com estratégia e identidade.',colors:['#25223b','#ffffff','#a69ce0'],mark:'CREATIVE'}
 };
-var ICON_NAMES = { chave:'Mecânica', casa:'Construção', tesoura:'Beleza', cafe:'Café', talheres:'Comida', camera:'Foto/Vídeo', pincel:'Pintura/Design', sacola:'Loja', folha:'Natural', pata:'Pet', estrela:'Premium', raio:'Energia', coracao:'Saúde', caminhao:'Transporte', laptop:'Tecnologia', flor:'Floricultura', telefone:'Contato', globo:'Redes' };
-function iconSVG(n, c, s) { return '<svg xmlns="http://www.w3.org/2000/svg" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + c + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[n] || '') + '</svg>' }
-var ICON_IMG = {};
-function getIcon(n, c) { var k = n + '|' + c; if (ICON_IMG[k]) return ICON_IMG[k]; var im = new Image(); ICON_IMG[k] = im; im.onload = function () { desenharCartao() }; im.onerror = function () {}; im.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(iconSVG(n, c, 48)); return im }
-
-/* ---------- QR CODE REAL ---------- */
-var QR_IMG = {};
-function waLink(z) { var d = String(z).replace(/\D/g, ''); return d.length >= 10 ? 'https://wa.me/55' + d : (d ? 'https://wa.me/' + d : '') }
-function getQR(text) { if (!text) return null; if (QR_IMG[text] !== undefined) return QR_IMG[text]; if (typeof qrcode === 'undefined') { QR_IMG[text] = null; return null }
-  try { var q = qrcode(0, 'M'); q.addData(text); q.make(); var im = new Image(); QR_IMG[text] = im; im.onload = function () { desenharCartao() }; im.src = q.createDataURL(4, 0); return im } catch (e) { QR_IMG[text] = null; return null } }
-
-/* ---------- UTILIDADES ---------- */
-function rgba(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')' }
-function lum(hex) { var n = parseInt(hex.slice(1), 16); var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }; return 0.2126 * f((n >> 16) & 255) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255) }
-function ratio(a, b) { var l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05) }
-function fontStr(w, px) { return (w ? w + ' ' : '') + px + 'px Arial, sans-serif' }
-function trunc(t, maxW) { if (ctx.measureText(t).width <= maxW) return t; while (t.length && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1); return t + '…' }
-function drawFit(text, X, Y, maxW, px, minPx, weight) {
-  ctx.font = fontStr(weight, px);
-  if (ctx.measureText(text).width <= maxW) { ctx.fillText(text, X, Y); return }
-  var p = px;
-  while (p > minPx && ctx.measureText(text).width > maxW) { p -= 2; ctx.font = fontStr(weight, p) }
-  if (ctx.measureText(text).width <= maxW) { ctx.fillText(text, X, Y); return }
-  var wds = text.split(' '), mid = Math.ceil(wds.length / 2);
-  var a = wds.slice(0, mid).join(' '), b = wds.slice(mid).join(' ');
-  while (p > minPx && (ctx.measureText(a).width > maxW || ctx.measureText(b).width > maxW)) { p -= 2; ctx.font = fontStr(weight, p) }
-  ctx.fillText(trunc(a, maxW), X, Y); ctx.fillText(trunc(b, maxW), X, Y + p + 16);
+const state={profession:'geral',photo:'',voice:'',music:'',position:'left',shape:'horizontal',mode:'digital',recording:false};
+let stream=null,recorder=null,chunks=[],history=[],future=[],saveTimer=null;
+const card=$('businessCard');
+function val(id){return $(id).value.trim()}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function snapshot(){const s={};fields.forEach(k=>s[k]=$(k).value);s.photo=state.photo;s.position=state.position;s.shape=state.shape;return JSON.stringify(s)}
+function pushHistory(){const s=snapshot();if(history[history.length-1]!==s){history.push(s);if(history.length>40)history.shift();future=[]}updateHistoryButtons()}
+function restore(s){const d=JSON.parse(s);fields.forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});state.photo=d.photo||'';state.position=d.position||'left';state.shape=d.shape||'horizontal';syncChoices();render()}
+function updateHistoryButtons(){$('undoBtn').disabled=history.length<2;$('redoBtn').disabled=!future.length}
+function save(){try{const data={};fields.forEach(k=>data[k]=$(k).value);data.photo=state.photo;data.position=state.position;data.shape=state.shape;localStorage.setItem('cartaoProStudio',JSON.stringify(data));$('saveStatus').textContent='Salvo neste aparelho'}catch(e){$('saveStatus').textContent='Imagem grande: exporte para guardar'} }
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,250)}
+function applyProfile(key){const p=profiles[key]||profiles.geral;state.profession=key;$('profession').value=key;$('role').value=p.role;$('tagline').value=p.tag;$('bgColor').value=p.colors[0];$('textColor').value=p.colors[1];$('accentColor').value=p.colors[2];$('templateNote').textContent=p.label+' — '+p.tag;render();pushHistory();scheduleSave()}
+function syncChoices(){document.querySelectorAll('[data-position]').forEach(b=>b.classList.toggle('active',b.dataset.position===state.position));document.querySelectorAll('[data-shape]').forEach(b=>b.classList.toggle('active',b.dataset.shape===state.shape));document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode))}
+function render(){
+ const p=profiles[$('profession').value]||profiles.geral;
+ card.style.setProperty('--card-bg',val('bgColor')||p.colors[0]);card.style.setProperty('--card-text',val('textColor')||'#fff');card.style.setProperty('--card-accent',val('accentColor')||p.colors[2]);
+ card.className='business-card shape-'+state.shape+' photo-'+state.position+' profession-'+$('profession').value;
+ if(val('fontStyle')==='classic')card.querySelector('.card-copy h2').style.fontFamily='Georgia,serif';else if(val('fontStyle')==='editorial')card.querySelector('.card-copy h2').style.fontFamily='"Playfair Display",Georgia,serif';else card.querySelector('.card-copy h2').style.fontFamily='"DM Sans",Arial,sans-serif';
+ $('previewName').textContent=val('name')||'Seu Nome';$('previewRole').textContent=val('role')||p.role;$('previewTagline').textContent=val('tagline')||p.tag;
+ $('cardMark').textContent=p.mark;
+ const img=$('previewImage'),wrap=$('imageWrap');if(state.photo){img.src=state.photo;img.hidden=false;wrap.style.display='block'}else{img.removeAttribute('src');img.hidden=true;wrap.style.display='none'}
+ const links=[];if(val('phone'))links.push('WhatsApp: '+val('phone'));if(val('email'))links.push(val('email'));if(val('instagram'))links.push(val('instagram'));if(val('website'))links.push(val('website'));
+ $('previewLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('previewAddress').textContent=val('address');
+ const back=$('printBack'),bp=profiles[$('profession').value]||profiles.geral;back.className='business-card print-back back-layout-'+(val('backLayout')||'editorial')+' profession-'+$('profession').value;back.style.setProperty('--card-bg',val('backBg')||'#171321');back.style.setProperty('--card-text',val('backText')||'#fff');back.style.setProperty('--card-accent',val('backAccent')||bp.colors[2]);$('backName').textContent=val('backTitle')||val('name')||'Seu Nome';$('backKicker').textContent=bp.label;$('backMessagePreview').textContent=val('backMessage');$('backExtraPreview').textContent=val('backExtra');$('backMonogram').textContent=bp.mark;$('backLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('backAddress').textContent=val('address');
+ $('audioLink').hidden=!(state.voice||state.music);
+ $('previewCaption').textContent=state.mode==='print'?'Frente e verso — use Imprimir / PDF para gerar as duas faces.':state.mode==='verso'?'Editando o verso — os campos do editor controlam somente esta face.':'Prévia da frente digital — o verso é preparado para impressão.';
+ $('previewStage').classList.toggle('print-mode',state.mode==='print');$('previewStage').classList.toggle('back-mode',state.mode==='verso');
 }
-function mascara(v) { var d = String(v).replace(/\D/g, '').slice(0, 11); if (d.length <= 2) return d; if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2); if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6); return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7) }
-function slug(s) { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'cartao' }
-function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('on'); setTimeout(function () { t.classList.remove('on') }, 2400) }
-
-/* ---------- PALETAS POR RAMO ---------- */
-var NICHES = {
-geral: ['#26352d', '#ffffff', '#806322'],
-construcao: ['#1f2937', '#f9fafb', '#f59e0b'],
-beleza: ['#3f1d38', '#fdf2f8', '#ec4899'],
-comida: ['#7f1d1d', '#fff7ed', '#f59e0b'],
-tech: ['#0f172a', '#e2e8f0', '#38bdf8'],
-fitness: ['#052e16', '#ecfdf5', '#10b981'],
-moda: ['#111111', '#fafafa', '#d4af37']
-};
-var NICHE_LABEL = { geral:'Geral', construcao:'Construção', beleza:'Beleza', comida:'Comida', tech:'Tecnologia', fitness:'Fitness', moda:'Moda' };
-
-/* ---------- DESENHO DO CARTÃO ---------- */
-function desenharCartao() {
-  var nome = STATE.nome || 'Seu Nome / Empresa';
-  var sub = STATE.sub || 'Sua Profissão ou Ramo';
-  var tel = STATE.tel || '(00) 00000-0000';
-  var insta = STATE.insta;
-  var qrText = (STATE.qr && waLink(STATE.tel)) ? waLink(STATE.tel) : null;
-
-  ctx.clearRect(0, 0, W, H);
-  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = STATE.fundo; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = STATE.destaque; ctx.fillRect(0, 0, 48, H); ctx.fillRect(0, H - 32, W, 32);
-
-  var bi = getIcon(STATE.icone, STATE.destaque);
-  if (bi && bi.complete && bi.naturalWidth) ctx.drawImage(bi, W - 210, 80, 130, 130);
-
-  ctx.fillStyle = STATE.texto;
-  drawFit(nome, 96, 200, W - 96 - 96 - 170, 76, 44, 'bold');
-  ctx.fillStyle = STATE.destaque;
-  drawFit(sub, 96, 320, W - 96 - 96 - 170, 44, 28, '');
-
-  ctx.strokeStyle = rgba(STATE.texto, 0.35); ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(96, 380); ctx.lineTo(W - 96, 380); ctx.stroke();
-
-  var qrImg = qrText ? getQR(qrText) : null;
-  var qrOn = !!(qrImg && qrImg.complete && qrImg.naturalWidth);
-  var maxCont = qrOn ? W - 164 - 96 - 330 : W - 164 - 96;
-
-  var ti = getIcon('telefone', STATE.texto);
-  if (ti && ti.complete && ti.naturalWidth) ctx.drawImage(ti, 96, 458, 46, 46);
-  ctx.fillStyle = STATE.texto; ctx.font = fontStr('', 44);
-  ctx.fillText(trunc('WhatsApp: ' + tel, maxCont), 164, 500);
-
-  if (insta) {
-    var gi = getIcon('globo', STATE.texto);
-    if (gi && gi.complete && gi.naturalWidth) ctx.drawImage(gi, 96, 578, 46, 46);
-    ctx.fillStyle = STATE.texto; ctx.font = fontStr('', 44);
-    ctx.fillText(trunc('Redes: ' + insta, maxCont), 164, 620);
-  }
-
-  if (qrOn) {
-    var bx = W - 356, by = 470, bs = 260;
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(bx, by, bs, bs);
-    ctx.drawImage(qrImg, bx + 10, by + 10, bs - 20, bs - 20);
-    ctx.fillStyle = rgba(STATE.texto, 0.85); ctx.font = fontStr('', 26); ctx.textAlign = 'center';
-    ctx.fillText('Aponte a câmera', bx + bs / 2, by + bs + 42);
-    ctx.textAlign = 'left';
-  }
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function normalizePhone(){return val('phone').replace(/\D/g,'')}
+function waUrl(){const n=normalizePhone();if(!n)return'';return 'https://wa.me/'+(n.startsWith('55')?n:'55'+n)}
+function normalizeUrl(s){if(!s)return'';return /^https?:\/\//i.test(s)?s:'https://'+s}
+function standalone(){
+ const name=escapeHtml(val('name')||'Profissional'),role=escapeHtml(val('role')),tag=escapeHtml(val('tagline')),address=escapeHtml(val('address'));
+ const bg=val('bgColor'),fg=val('textColor'),ac=val('accentColor'),font=val('fontStyle')==='classic'?'Georgia,serif':'Arial,sans-serif';
+ const backBg=val('backBg')||'#171321',backFg=val('backText')||'#fff',backAc=val('backAccent')||ac,backTitle=escapeHtml(val('backTitle')||val('name')||'Seu Nome'),backMessage=escapeHtml(val('backMessage')),backExtra=escapeHtml(val('backExtra')),backLayout=val('backLayout')||'editorial';
+ const img=state.photo?'<img class="photo" src="'+state.photo+'" alt="Foto ou logotipo">':'';
+ const contact=[];
+ if(waUrl())contact.push('<a href="'+waUrl()+'" target="_blank" rel="noopener">WhatsApp</a>');
+ if(val('email'))contact.push('<a href="mailto:'+encodeURIComponent(val('email'))+'">E-mail</a>');
+ if(val('instagram')){let x=val('instagram');contact.push('<a href="'+normalizeUrl(x[0]==='@'?'instagram.com/'+x.slice(1):x)+'" target="_blank" rel="noopener">Instagram</a>')}
+ if(val('website'))contact.push('<a href="'+normalizeUrl(val('website'))+'" target="_blank" rel="noopener">Site</a>');
+ const audio=(state.voice||state.music)?'<details class="audio"><summary>▶ Ouvir apresentação</summary>'+(state.voice?'<audio controls preload="none" src="'+state.voice+'"></audio>':'')+(state.music?'<audio controls preload="none" src="'+state.music+'"></audio>':'')+(val('introText')?'<p>'+escapeHtml(val('introText'))+'</p>':'')+'</details>':'';
+ const shape=state.shape==='triangle'?'clip-path:polygon(50% 0,100% 100%,0 100%);border-radius:0;':state.shape==='hexagon'?'clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);border-radius:0;':state.shape==='free'?'border-radius:38px 8px 38px 8px;':'';
+ const backHtml='<section class="back"><small>'+escapeHtml((profiles[$('profession').value]||profiles.geral).label)+'</small><h2>'+backTitle+'</h2><p>'+backMessage+'</p><hr><nav>'+contact.join('')+'</nav><p>'+address+'</p><b>'+backExtra+'</b></section>';
+ return '<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="'+bg+'"><title>'+name+' — Cartão profissional</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#efedf1;font-family:'+font+';padding:24px}.card{position:relative;overflow:hidden;width:min(720px,100%);min-height:360px;background:'+bg+';color:'+fg+';padding:58px;display:flex;align-items:center;gap:30px;box-shadow:0 22px 60px #17132130;'+shape+'}.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:'+ac+'}.photo{width:150px;height:190px;object-fit:cover;border-radius:10px}.content{position:relative;z-index:1}.role{color:'+ac+';font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:bold}.name{font-size:clamp(28px,6vw,48px);margin:12px 0 8px}.tag{opacity:.8;line-height:1.5}.rule{height:1px;background:'+fg+'55;margin:22px 0}.links{display:flex;flex-wrap:wrap;gap:12px 20px}.links a{color:'+fg+';text-decoration:none;border-bottom:1px solid '+ac+';padding-bottom:3px}.address{font-size:12px;opacity:.7;margin-top:15px}.audio{margin-top:20px;color:'+ac+'}.audio audio{display:block;max-width:100%;margin-top:12px}.audio summary{cursor:pointer} .back{position:relative;overflow:hidden;width:min(720px,100%);min-height:250px;margin:28px auto 0;padding:42px;background:'+backBg+';color:'+backFg+';border-left:8px solid '+backAc+';box-shadow:0 22px 60px #17132130}.back small{color:'+backAc+';letter-spacing:.16em;text-transform:uppercase}.back h2{font-size:32px;margin:12px 0}.back p{line-height:1.5}.back hr{border:0;border-top:1px solid '+backFg+'55;margin:20px 0}.back nav{display:flex;flex-wrap:wrap;gap:12px}.back a{color:'+backFg+'}.back b{color:'+backAc+'}@media(max-width:560px){.card{padding:32px 24px;flex-direction:column;align-items:flex-start}.photo{width:110px;height:110px;border-radius:50%}.back{padding:28px 24px}}</style><main class="card">'+img+'<section class="content"><div class="role">'+role+'</div><h1 class="name">'+name+'</h1><p class="tag">'+tag+'</p><div class="rule"></div><nav class="links">'+contact.join('')+'</nav><div class="address">'+address+'</div>'+audio+'</section></main>'+backHtml+'</html>';
 }
-
-/* ---------- CONTRASTE INTELIGENTE ---------- */
-function checkContrast() {
-  var probs = [];
-  if (ratio(STATE.texto, STATE.fundo) < 3) probs.push('texto sobre o fundo');
-  if (ratio(STATE.destaque, STATE.fundo) < 2.2) probs.push('destaque sobre o fundo');
-  var w = $('contrastWarn');
-  if (probs.length) { w.style.display = 'block'; w.textContent = '⚠️ Contraste baixo: ' + probs.join(' e ') + '. O cartão pode ficar difícil de ler — ajuste as cores.' }
-  else w.style.display = 'none';
-}
-
-/* ---------- IDENTIDADE VISUAL ---------- */
-function updIdentity() {
-  [['sw-fundo', 'fundo'], ['sw-texto', 'texto'], ['sw-destaque', 'destaque']].forEach(function (p) {
-    var el = $(p[0]); el.style.background = STATE[p[1]]; el.textContent = STATE[p[1]].toUpperCase();
-  });
-}
-function copyHex(key) {
-  var v = STATE[key].toUpperCase();
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(function () { toast('📋 Código ' + v + ' copiado!') }, function () { toast(v) });
-  else toast(v);
-}
-
-/* ---------- CONTROLES ---------- */
-function onField(key, val) { STATE[key] = val; saveState(); desenharCartao() }
-function onTel(el) { el.value = mascara(el.value); STATE.tel = el.value; saveState(); desenharCartao() }
-function onColor(key, val) { STATE[key] = val; saveState(); desenharCartao(); checkContrast(); updIdentity() }
-function onQR(v) { STATE.qr = v; saveState(); desenharCartao() }
-function setNiche(k) {
-  STATE.niche = k; STATE.fundo = NICHES[k][0]; STATE.texto = NICHES[k][1]; STATE.destaque = NICHES[k][2];
-  $('corFundo').value = STATE.fundo; $('corTexto').value = STATE.texto; $('corDestaque').value = STATE.destaque;
-  renderChips(); saveState(); desenharCartao(); checkContrast(); updIdentity();
-}
-function setIcon(k) { STATE.icone = k; renderIcons(); saveState(); desenharCartao() }
-function renderChips() {
-  var c = $('chips'); c.innerHTML = '';
-  Object.keys(NICHES).forEach(function (k) {
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (STATE.niche === k ? ' on' : ''); b.textContent = NICHE_LABEL[k];
-    b.onclick = function () { setNiche(k) }; c.appendChild(b);
-  });
-}
-function renderIcons() {
-  var c = $('iconGrid'); c.innerHTML = '';
-  Object.keys(ICONS).forEach(function (k) {
-    if (k === 'telefone' || k === 'globo') return;
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'icobtn' + (STATE.icone === k ? ' on' : ''); b.title = ICON_NAMES[k];
-    b.innerHTML = iconSVG(k, '#687568', 22); b.onclick = function () { setIcon(k) }; c.appendChild(b);
-  });
-}
-function baixarCartao() {
-  var a = document.createElement('a');
-  a.download = 'cartao-' + slug(STATE.nome || 'visita') + '.png';
-  a.href = canvas.toDataURL('image/png');
-  document.body.appendChild(a); a.click(); a.remove();
-  toast('✅ Cartão em alta resolução baixado!');
-}
-
-/* ---------- INIT (memória local) ---------- */
-(function () {
-  $('nome').value = STATE.nome; $('subtitulo').value = STATE.sub; $('telefone').value = STATE.tel; $('instagram').value = STATE.insta;
-  $('corFundo').value = STATE.fundo; $('corTexto').value = STATE.texto; $('corDestaque').value = STATE.destaque; $('qrOn').checked = !!STATE.qr;
-  renderChips(); renderIcons(); updIdentity(); checkContrast(); desenharCartao();
+function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+function vcard(){const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+val('name'),'TITLE:'+val('role')];if(normalizePhone())lines.push('TEL;TYPE=CELL:'+normalizePhone());if(val('email'))lines.push('EMAIL:'+val('email'));if(val('website'))lines.push('URL:'+normalizeUrl(val('website')));if(val('address'))lines.push('ADR;TYPE=WORK:;;'+val('address'));lines.push('END:VCARD');download('contato-'+(val('name')||'profissional').replace(/[^a-z0-9]/gi,'-')+'.vcf',lines.join('\r\n'),'text/vcard;charset=utf-8')}
+async function fileToData(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+$('profession').addEventListener('change',e=>applyProfile(e.target.value));
+fields.forEach(id=>$(id).addEventListener('input',()=>{render();scheduleSave()}));
+$('photo').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/'))return toast('Selecione uma imagem.');state.photo=await fileToData(f);render();pushHistory();scheduleSave()});
+$('removePhoto').onclick=()=>{state.photo='';$('photo').value='';render();pushHistory();scheduleSave()};
+$('photoPositions').onclick=e=>{const b=e.target.closest('[data-position]');if(!b)return;state.position=b.dataset.position;syncChoices();render();pushHistory();scheduleSave()};
+$('shapes').onclick=e=>{const b=e.target.closest('[data-shape]');if(!b)return;state.shape=b.dataset.shape;syncChoices();render();pushHistory();scheduleSave()};
+document.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;state.mode=b.dataset.mode;syncChoices();render()};
+['bgColor','textColor','accentColor','fontStyle'].forEach(id=>$(id).addEventListener('input',()=>{render();scheduleSave()}));
+$('cameraBtn').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});$('camera').srcObject=stream;$('camera').hidden=false;$('captureBtn').hidden=false}catch(e){toast('Não foi possível acessar a câmera. Verifique a permissão do navegador.')}};
+$('captureBtn').onclick=()=>{const v=$('camera'),c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);state.photo=c.toDataURL('image/jpeg',.88);stopCamera();render();pushHistory();scheduleSave()};
+function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('camera').hidden=true;$('captureBtn').hidden=true}
+$('recordBtn').onclick=async()=>{try{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw Error();const s=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];recorder=new MediaRecorder(s);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});const reader=new FileReader();reader.onload=()=>{state.voice=reader.result;$('voicePreview').src=state.voice;$('voicePreview').hidden=false;render();toast('Gravação pronta para incluir no cartão exportado.')};reader.readAsDataURL(blob);s.getTracks().forEach(t=>t.stop())};recorder.start();$('recordBtn').disabled=true;$('stopRecordBtn').disabled=false;toast('Gravando. Fale sua apresentação.') }catch(e){toast('Gravação indisponível neste navegador ou sem permissão de microfone.')}};
+$('stopRecordBtn').onclick=()=>{if(recorder&&recorder.state!=='inactive')recorder.stop();$('recordBtn').disabled=false;$('stopRecordBtn').disabled=true};
+$('musicFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('audio/'))return toast('Selecione um arquivo de áudio.');state.music=await fileToData(f);render();toast('Trilha adicionada ao cartão exportado.')});
+$('downloadHtml').onclick=()=>download('cartao-'+(val('name')||'profissional').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.html',standalone(),'text/html;charset=utf-8');
+$('downloadVcf').onclick=vcard;
+$('printBtn').onclick=()=>{state.mode='print';syncChoices();render();window.print()};
+$('shareBtn').onclick=async()=>{const html=standalone();if(navigator.share&&navigator.canShare){const file=new File([html],'cartao.html',{type:'text/html'});try{await navigator.share({title:val('name')||'Meu cartão profissional',files:[file]});return}catch(e){}}download('cartao.html',html,'text/html;charset=utf-8');toast('Arquivo pronto. Anexe o HTML para compartilhar.')};
+$('undoBtn').onclick=()=>{if(history.length<2)return;future.push(history.pop());restore(history[history.length-1]);updateHistoryButtons();scheduleSave()};
+$('redoBtn').onclick=()=>{if(!future.length)return;const s=future.pop();history.push(s);restore(s);updateHistoryButtons();scheduleSave()};
+const saved=localStorage.getItem('cartaoProStudio');if(saved){try{const d=JSON.parse(saved);fields.forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});state.photo=d.photo||'';state.position=d.position||'left';state.shape=d.shape||'horizontal'}catch(e){}}
+syncChoices();render();pushHistory();
+window.addEventListener('beforeunload',stopCamera);
 })();
