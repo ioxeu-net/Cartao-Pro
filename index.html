@@ -50,8 +50,17 @@
       <div class="color-fields"><div><label for="bgColor">Fundo</label><input id="bgColor" type="color" value="#20202a"></div><div><label for="textColor">Texto</label><input id="textColor" type="color" value="#ffffff"></div><div><label for="accentColor">Destaque</label><input id="accentColor" type="color" value="#c9a66b"></div></div>
       <label for="fontStyle">Tipografia</label><select id="fontStyle"><option value="modern">Moderna</option><option value="classic">Clássica</option><option value="editorial">Editorial</option></select>
     </section>
+    <section class="panel back-editor">
+      <div class="section-head"><span class="step">05</span><div><h2>Editor independente do verso</h2><p>Personalize o outro lado sem alterar a frente</p></div></div>
+      <label for="backTitle">Título do verso</label><input id="backTitle" maxlength="70" placeholder="Ex.: Vamos conversar?">
+      <label for="backMessage">Mensagem principal</label><textarea id="backMessage" rows="3" maxlength="240" placeholder="Escreva uma mensagem, diferenciais ou apresentação complementar."></textarea>
+      <label for="backExtra">Informação complementar</label><input id="backExtra" maxlength="120" placeholder="Ex.: Atendimento com hora marcada">
+      <label for="backLayout">Composição do verso</label><select id="backLayout"><option value="editorial">Editorial</option><option value="minimal">Minimalista</option><option value="contact">Contatos em destaque</option><option value="brand">Assinatura da marca</option></select>
+      <div class="color-fields"><div><label for="backBg">Fundo do verso</label><input id="backBg" type="color" value="#171321"></div><div><label for="backText">Texto do verso</label><input id="backText" type="color" value="#ffffff"></div><div><label for="backAccent">Destaque do verso</label><input id="backAccent" type="color" value="#c9a66b"></div></div>
+      <p class="hint">O verso tem cores, texto e estilo próprios. As alterações não modificam a frente do cartão.</p>
+    </section>
     <section class="panel">
-      <div class="section-head"><span class="step">05</span><div><h2>Voz e trilha opcional</h2><p>Uma apresentação pessoal, sem obrigatoriedade</p></div></div>
+      <div class="section-head"><span class="step">06</span><div><h2>Voz e trilha opcional</h2><p>Uma apresentação pessoal, sem obrigatoriedade</p></div></div>
       <p class="hint">Grave uma mensagem curta ou selecione um áudio seu. A reprodução só começa quando a pessoa tocar no cartão.</p>
       <div class="inline-actions"><button class="btn btn-outline" id="recordBtn" type="button">● Gravar voz</button><button class="btn btn-text" id="stopRecordBtn" type="button" disabled>Parar gravação</button></div>
       <audio id="voicePreview" controls hidden></audio>
@@ -60,7 +69,7 @@
       <p class="hint small">O áudio é opcional. Use somente músicas que você tenha direito de utilizar.</p>
     </section>
     <section class="panel export-panel">
-      <div class="section-head"><span class="step">06</span><div><h2>Publicar e exportar</h2><p>Digital clicável ou arquivo para impressão</p></div></div>
+      <div class="section-head"><span class="step">07</span><div><h2>Publicar e exportar</h2><p>Digital clicável ou arquivo para impressão</p></div></div>
       <div class="export-grid"><button id="downloadHtml" class="btn btn-primary" type="button">Baixar cartão digital HTML</button><button id="downloadVcf" class="btn btn-outline" type="button">Salvar contato (vCard)</button><button id="printBtn" class="btn btn-outline" type="button">Imprimir / PDF</button><button id="shareBtn" class="btn btn-outline" type="button">Compartilhar</button></div>
     </section>
   </aside>
@@ -72,7 +81,7 @@
         <div class="card-copy"><div class="card-kicker" id="previewRole">SUA PROFISSÃO</div><h2 id="previewName">Seu Nome</h2><p class="card-tagline" id="previewTagline">Sua apresentação profissional</p><div class="card-rule"></div><div class="card-links" id="previewLinks"></div><div class="card-location" id="previewAddress"></div><div class="audio-link" id="audioLink" hidden>▶ Ouvir apresentação</div></div>
         <div class="card-mark" id="cardMark">CP</div>
       </article>
-      <article class="business-card print-back" id="printBack"><div class="card-copy"><div class="card-kicker">CONTATOS E INFORMAÇÕES</div><h2 id="backName">Seu Nome</h2><div class="card-rule"></div><div class="card-links" id="backLinks"></div><div class="card-location" id="backAddress"></div></div></article>
+      <article class="business-card print-back back-layout-editorial" id="printBack"><div class="back-art" aria-hidden="true"></div><div class="card-copy"><div class="card-kicker" id="backKicker">SEU NEGÓCIO</div><h2 id="backName">Seu Nome</h2><p class="back-message" id="backMessagePreview"></p><div class="card-rule"></div><div class="card-links" id="backLinks"></div><div class="card-location" id="backAddress"></div><p class="back-extra" id="backExtraPreview"></p></div><div class="back-monogram" id="backMonogram">CP</div></article>
       <p class="preview-caption" id="previewCaption">Prévia do cartão digital — os contatos são clicáveis no arquivo exportado.</p>
     </div>
     <div class="preview-foot"><span>Prévia adaptável</span><span>Seus dados ficam neste aparelho durante a edição.</span></div>
