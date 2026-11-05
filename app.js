@@ -48,8 +48,8 @@ function render(){
  $('previewLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('previewAddress').textContent=val('address');
  const back=$('printBack'),bp=profiles[$('profession').value]||profiles.geral;back.className='business-card print-back back-layout-'+(val('backLayout')||'editorial')+' profession-'+$('profession').value;back.style.setProperty('--card-bg',val('backBg')||'#171321');back.style.setProperty('--card-text',val('backText')||'#fff');back.style.setProperty('--card-accent',val('backAccent')||bp.colors[2]);$('backName').textContent=val('backTitle')||val('name')||'Seu Nome';$('backKicker').textContent=bp.label;$('backMessagePreview').textContent=val('backMessage');$('backExtraPreview').textContent=val('backExtra');$('backMonogram').textContent=bp.mark;$('backLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('backAddress').textContent=val('address');
  $('audioLink').hidden=!(state.voice||state.music);
- $('previewCaption').textContent=state.mode==='print'?'Frente e verso — use Imprimir / PDF para gerar as duas faces.':'Prévia da frente digital — o verso é preparado para impressão.';
- $('previewStage').classList.toggle('print-mode',state.mode==='print');
+ $('previewCaption').textContent=state.mode==='print'?'Frente e verso — use Imprimir / PDF para gerar as duas faces.':state.mode==='verso'?'Editando o verso — os campos do editor controlam somente esta face.':'Prévia da frente digital — o verso é preparado para impressão.';
+ $('previewStage').classList.toggle('print-mode',state.mode==='print');$('previewStage').classList.toggle('back-mode',state.mode==='verso');
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function normalizePhone(){return val('phone').replace(/\D/g,'')}
