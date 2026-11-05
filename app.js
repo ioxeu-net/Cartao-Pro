@@ -45,7 +45,7 @@ function render(){
  $('cardMark').textContent=p.mark;
  const img=$('previewImage'),wrap=$('imageWrap');if(state.photo){img.src=state.photo;img.hidden=false;wrap.style.display='block'}else{img.removeAttribute('src');img.hidden=true;wrap.style.display='none'}
  const links=[];if(val('phone'))links.push('WhatsApp: '+val('phone'));if(val('email'))links.push(val('email'));if(val('instagram'))links.push(val('instagram'));if(val('website'))links.push(val('website'));
- $('previewLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('previewAddress').textContent=val('address');
+ $('previewLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('previewAddress').textContent=val('address');$('backName').textContent=val('name')||'Seu Nome';$('backLinks').innerHTML=links.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');$('backAddress').textContent=val('address');
  $('audioLink').hidden=!(state.voice||state.music);
  $('previewCaption').textContent=state.mode==='print'?'Prévia para impressão — use Imprimir / PDF para gerar o arquivo.':'Prévia do cartão digital — os contatos serão clicáveis no arquivo exportado.';
  $('previewStage').classList.toggle('print-mode',state.mode==='print');
