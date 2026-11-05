@@ -3,85 +3,195 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cartão Pro — Gerador de Cartão de Visita e Identidade Visual</title>
-<meta name="description" content="Crie grátis um cartão de visita profissional com QR Code real do WhatsApp, cores da sua marca e identidade visual. Sem cadastro.">
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
-<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#182536">
+<meta name="description" content="CartãoPronto Pro — editor de cartões digitais e impressos.">
+<title>CartãoPronto Pro</title>
+<style>
+:root{--ink:#172536;--muted:#687586;--line:#e3e8ed;--paper:#fff;--canvas:#f2f4f6;--accent:#245b72;--accent2:#173e52;--soft:#eaf1f4;--radius:14px}
+*{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(22px,calc((100vw - 1440px)/2));position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px;letter-spacing:-.4px}.mark{width:34px;height:34px;border-radius:9px;background:var(--ink);color:white;display:grid;place-items:center;font-size:16px}.brand small{display:block;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1.2px;text-transform:uppercase}
+.header-actions{display:flex;gap:8px;align-items:center}.status{font-size:11px;color:#38745c;margin-right:12px}
+button,.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 13px;font-weight:650}.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}button:hover{border-color:#9aabb8}.btn-quiet{background:#f7f8f9}
+.app{max-width:1440px;margin:auto;padding:24px;display:grid;grid-template-columns:minmax(420px,1fr) minmax(360px,500px);gap:22px;align-items:start}
+.intro{margin:0 0 18px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase}.intro h1{font-size:27px;line-height:1.2;letter-spacing:-.8px;margin:5px 0}.intro p{margin:0;color:var(--muted);max-width:700px}
+.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);margin-bottom:15px}.tab{border:0;border-radius:8px 8px 0 0;background:transparent;padding:11px 15px;color:var(--muted)}.tab.active{color:var(--accent);background:#fff;border-bottom:2px solid var(--accent)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:19px;margin-bottom:13px}.panel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:14px}.panel h2{font-size:14px;margin:0}.panel-head p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-size:11px;font-weight:750;color:#4b5968;margin-bottom:5px}
+input,select,textarea{width:100%;border:1px solid #d8e0e6;border-radius:8px;padding:9px 10px;background:#fff;color:var(--ink);outline:none;min-height:39px}textarea{resize:vertical;min-height:72px}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #245b7217}
+.help{font-size:10px;color:var(--muted);margin:5px 0 0}.upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.upload-row input{max-width:100%;flex:1}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}.swatch{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #aeb8c0}.swatch.active{box-shadow:0 0 0 2px var(--accent)}
+.color-input{width:45px;height:32px;padding:2px;min-height:32px}
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.link-field label{margin-bottom:4px}.link-field input{min-height:36px}
+.preview-wrap{position:sticky;top:88px}.preview-heading{display:flex;justify-content:space-between;align-items:center;margin:0 2px 12px}.preview-heading strong{font-size:13px}.live{font-size:10px;color:#347456}.stage{background:#dfe4e8;border:1px solid #d4dbe0;border-radius:16px;padding:28px 18px;min-height:590px;display:grid;place-items:center;overflow:hidden}
+.card{position:relative;--card-bg:#173e52;--card-ink:#fff;--card-accent:#d7e5eb;width:min(100%,360px);min-height:520px;background:var(--card-bg);color:var(--card-ink);border-radius:18px;padding:34px 27px 25px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 18px 40px #142a3a2c;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:var(--card-accent)}
+.logo{width:90px;height:90px;border-radius:14px;border:1px solid #ffffff55;display:grid;place-items:center;overflow:hidden;margin:0 auto 17px;background:#ffffff12;color:var(--card-ink);font-size:12px;font-weight:700}.logo img{width:100%;height:100%;object-fit:contain}
+.card h2{font-size:25px;line-height:1.18;letter-spacing:-.6px;margin:0 0 5px;overflow-wrap:anywhere}.role{font-size:13px;color:var(--card-accent)}.bio{font-size:12px;line-height:1.55;opacity:.86;max-width:275px;margin:12px 0 0}
+.card-actions{width:100%;display:grid;gap:9px;margin:25px 0 0}.card-action{display:flex;align-items:center;justify-content:center;min-height:42px;border-radius:8px;background:#fff;color:#172536;text-decoration:none;font-size:12px;font-weight:750;padding:9px 12px;overflow-wrap:anywhere;border:0}.card-action:hover{filter:brightness(.94)}.card-foot{font-size:9px;opacity:.55;margin-top:auto;padding-top:24px}
+.preview-note{font-size:10px;color:var(--muted);margin:10px 3px}.print-preview{width:min(100%,430px);background:white;color:#172536;padding:24px;box-shadow:0 12px 35px #142a3a20;border-radius:3px;display:none}
+.print-sheet{display:flex;flex-direction:column;gap:12px}.print-front,.print-back{width:90mm;height:50mm;min-height:50mm;border:1px solid #dfe4e8;padding:7mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:hidden}.print-front{background:var(--card-bg);color:var(--card-ink)}.print-back{align-items:flex-start;text-align:left;gap:6px}.print-logo{width:17mm;height:17mm;display:grid;place-items:center;margin-bottom:3mm;overflow:hidden}.print-logo img{width:100%;height:100%;object-fit:contain}.print-back h3{margin:0 0 2mm}.print-back p{font-size:9pt;margin:1mm 0}#printPreview[data-size="85x55"] .print-front,#printPreview[data-size="85x55"] .print-back{width:85mm;height:55mm;min-height:55mm}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.actions button{flex:1}
+.hidden{display:none!important}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#172536;color:#fff;padding:10px 15px;border-radius:9px;z-index:30;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.app{grid-template-columns:1fr;max-width:720px}.preview-wrap{position:static;grid-row:1}.stage{min-height:560px}header{padding:0 16px}}
+@media(max-width:560px){header{height:60px}.status{display:none}.header-actions button{padding:8px 9px;font-size:11px}.app{padding:16px 12px 35px;gap:15px}.intro h1{font-size:23px}.panel{padding:15px}.grid,.link-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.stage{padding:18px 10px;min-height:540px}.card{min-height:500px;padding:30px 22px 22px}.tabs{overflow:auto}.tab{white-space:nowrap;padding:10px}}
+@media print{body{background:white}.no-print,header,.editor,.preview-heading,.preview-note{display:none!important}.app{display:block;padding:0;margin:0}.preview-wrap{position:static}.stage{display:none}.print-preview{display:block!important;width:100%;box-shadow:none;padding:0}.print-sheet{gap:8mm}.print-front,.print-back{page-break-inside:avoid;break-inside:avoid}@page{size:A4;margin:15mm}}
+</style>
 </head>
 <body>
-<div class="container">
 <header>
-<h1>Cartão Pro</h1>
-<p>Cartão de visita profissional + identidade visual, em segundos e sem complicação.</p>
+ <div class="brand"><span class="mark">CP</span><span>CartãoPronto<small>PRO · DIGITAL & IMPRESSO</small></span></div>
+ <div class="header-actions"><span class="status" id="saveStatus">Rascunho local</span><button id="undo">Desfazer</button><button id="redo">Refazer</button><button class="btn-primary" id="exportTop">Exportar cartão</button></div>
 </header>
-<main>
-<section class="card">
-<h3>1. Seus Dados</h3>
-<label for="nome">Seu Nome / Nome do Negócio:</label>
-<input type="text" id="nome" maxlength="60" placeholder="Ex.: João da Silva - Pedreiro" oninput="onField('nome',this.value)">
-<label for="subtitulo">Slogan ou Ramo de Atuação:</label>
-<input type="text" id="subtitulo" maxlength="60" placeholder="Ex.: Reformas e Construção em Geral" oninput="onField('sub',this.value)">
-<label for="telefone">WhatsApp para Contato:</label>
-<input type="text" id="telefone" maxlength="16" placeholder="Ex.: (11) 99999-8888" oninput="onTel(this)">
-<label for="instagram">Instagram ou Redes (Opcional):</label>
-<input type="text" id="instagram" maxlength="40" placeholder="Ex.: @joao.reformas" oninput="onField('insta',this.value)">
+<main class="app">
+<section class="editor no-print">
+ <div class="intro"><div class="eyebrow">Estúdio de identidade profissional</div><h1>Crie um cartão que represente seu negócio.</h1><p>Edite, visualize e exporte um cartão digital clicável ou uma composição pronta para impressão.</p></div>
+ <div class="tabs"><button class="tab active" data-tab="digital">Cartão digital</button><button class="tab" data-tab="print">Impressão frente e verso</button></div>
+ <div id="digitalEditor">
+  <section class="panel"><div class="panel-head"><div><h2>Identidade e apresentação</h2><p>Informações principais do cartão.</p></div></div>
+   <div class="grid">
+    <div class="field full"><label for="name">Nome ou empresa *</label><input id="name" maxlength="70" placeholder="Ex.: Estúdio Horizonte"></div>
+    <div class="field"><label for="job">Profissão / especialidade</label><input id="job" maxlength="70" placeholder="Ex.: Arquitetura e interiores"></div>
+    <div class="field"><label for="city">Cidade</label><input id="city" maxlength="70" placeholder="Ex.: São Paulo — SP"></div>
+    <div class="field full"><label for="bio">Apresentação curta</label><textarea id="bio" maxlength="220" placeholder="Descreva seus serviços em poucas palavras."></textarea></div>
+   </div>
+  </section>
+  <section class="panel"><div class="panel-head"><div><h2>Logotipo ou fotografia</h2><p>Use arquivo, galeria ou câmera do dispositivo. O acesso é opcional.</p></div></div>
+   <div class="field"><label for="logoFile">Adicionar imagem (PNG, JPG, WEBP ou SVG)</label><div class="upload-row"><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><button type="button" id="removeLogo">Remover</button></div><p class="help">Em celulares compatíveis, você pode escolher a câmera pelo seletor do próprio sistema. O arquivo será incorporado ao HTML exportado.</p></div>
+   <div class="field" style="margin-top:12px"><label for="cameraFile">Abrir câmera do celular</label><input id="cameraFile" type="file" accept="image/*" capture="environment"><p class="help">O navegador solicitará permissão quando necessário.</p></div>
+  </section>
+  <section class="panel"><div class="panel-head"><div><h2>Estilo visual</h2><p>Paletas sóbrias e tipografia profissional.</p></div></div>
+   <label>Paleta</label><div class="swatches" id="palettes"></div>
+   <div class="grid" style="margin-top:14px">
+    <div class="field"><label for="customColor">Cor principal personalizada</label><input class="color-input" id="customColor" type="color" value="#173e52"></div>
+    <div class="field"><label for="font">Tipografia</label><select id="font"><option value="system">Contemporânea</option><option value="Georgia,serif">Editorial</option><option value="Arial,sans-serif">Neutra</option><option value="'Trebuchet MS',sans-serif">Geométrica</option><option value="'Courier New',monospace">Técnica</option></select></div>
+    <div class="field"><label for="layout">Modelo</label><select id="layout"><option value="classic">Clássico</option><option value="minimal">Minimalista</option><option value="business">Corporativo</option><option value="photo">Destaque visual</option></select></div>
+    <div class="field"><label for="buttonStyle">Botões</label><select id="buttonStyle"><option value="8px">Discretos</option><option value="3px">Retos</option><option value="22px">Arredondados</option></select></div>
+   </div>
+  </section>
+  <section class="panel"><div class="panel-head"><div><h2>Contatos e links clicáveis</h2><p>Somente os campos preenchidos aparecem no cartão.</p></div></div>
+   <div class="link-grid">
+    <div class="link-field"><label for="whatsapp">WhatsApp (com DDD)</label><input id="whatsapp" placeholder="11999998888"></div>
+    <div class="link-field"><label for="phone">Telefone</label><input id="phone" placeholder="1133334444"></div>
+    <div class="link-field"><label for="email">E-mail</label><input id="email" type="email" placeholder="contato@empresa.com"></div>
+    <div class="link-field"><label for="website">Site</label><input id="website" placeholder="www.suaempresa.com.br"></div>
+    <div class="link-field"><label for="instagram">Instagram</label><input id="instagram" placeholder="@seuperfil"></div>
+    <div class="link-field"><label for="facebook">Facebook</label><input id="facebook" placeholder="Link do perfil ou página"></div>
+    <div class="link-field"><label for="linkedin">LinkedIn</label><input id="linkedin" placeholder="Link do perfil"></div>
+    <div class="link-field"><label for="maps">Localização / Maps</label><input id="maps" placeholder="Link do Google Maps"></div>
+    <div class="link-field"><label for="pix">Chave Pix</label><input id="pix" placeholder="CPF, e-mail, telefone ou chave"></div>
+    <div class="link-field"><label for="message">Mensagem do WhatsApp</label><input id="message" placeholder="Olá! Gostaria de informações."></div>
+   </div>
+  </section>
+ </div>
+ <div id="printEditor" class="hidden">
+  <section class="panel"><div class="panel-head"><div><h2>Verso do cartão</h2><p>Configure informações complementares para impressão.</p></div></div>
+   <div class="grid">
+    <div class="field full"><label for="backTitle">Título do verso</label><input id="backTitle" maxlength="80" placeholder="Ex.: Soluções para sua empresa"></div>
+    <div class="field full"><label for="backText">Descrição / serviços</label><textarea id="backText" maxlength="350" placeholder="Liste serviços, diferenciais ou informações adicionais."></textarea></div>
+    <div class="field full"><label for="backAddress">Endereço físico</label><input id="backAddress" maxlength="140" placeholder="Rua, número, bairro, cidade"></div>
+   </div>
+  </section>
+  <section class="panel"><div class="panel-head"><div><h2>Formato de impressão</h2><p>Use a impressão do navegador e escolha “Salvar como PDF”.</p></div></div>
+   <div class="grid"><div class="field"><label for="printSize">Tamanho</label><select id="printSize"><option value="90x50">90 × 50 mm (padrão)</option><option value="85x55">85 × 55 mm</option><option value="custom">A4 — prova de impressão</option></select></div><div class="field"><label for="printBleed">Margem de segurança</label><select id="printBleed"><option value="safe">Área segura</option><option value="compact">Compacta</option></select></div></div>
+   <p class="help">A saída é uma prova frente e verso em folha A4. Para gráfica, confirme sangria, perfil de cor e especificações exigidas pelo fornecedor.</p>
+  </section>
+ </div>
+ <div class="actions"><button class="btn-primary" id="export">Baixar HTML independente</button><button id="vcard">Salvar contato (.VCF)</button><button id="share">Compartilhar</button><button id="print">Imprimir / PDF</button></div>
+ <div class="actions"><button id="saveDraft">Salvar rascunho</button><button id="clear">Novo cartão</button></div>
+ <p class="help">O cartão digital não precisa de QR Code: os próprios botões são links. O HTML exportado funciona sem React e incorpora a imagem escolhida.</p>
 </section>
-
-<section class="card">
-<h3>2. Identidade da sua Marca</h3>
-<label>Seu ramo (sugere cores profissionais):</label>
-<div class="chips" id="chips"></div>
-<label>Ícone do seu negócio:</label>
-<div class="icon-grid" id="iconGrid"></div>
-<label class="check"><input type="checkbox" id="qrOn" onchange="onQR(this.checked)"> Incluir QR Code real do WhatsApp no cartão</label>
-<h3>Cores (ajuste fino):</h3>
-<div class="color-grid">
-<div><label for="corFundo">Fundo:</label><input type="color" id="corFundo" value="#26352d" oninput="onColor('fundo',this.value)"></div>
-<div><label for="corTexto">Texto:</label><input type="color" id="corTexto" value="#ffffff" oninput="onColor('texto',this.value)"></div>
-<div><label for="corDestaque">Destaque:</label><input type="color" id="corDestaque" value="#806322" oninput="onColor('destaque',this.value)"></div>
-</div>
-<div id="contrastWarn" class="warn" style="display:none"></div>
-<div class="identity">
-<label>Sua identidade visual (toque para copiar o código):</label>
-<div class="swatches">
-<button type="button" class="swatch" id="sw-fundo" onclick="copyHex('fundo')"></button>
-<button type="button" class="swatch" id="sw-texto" onclick="copyHex('texto')"></button>
-<button type="button" class="swatch" id="sw-destaque" onclick="copyHex('destaque')"></button>
-</div>
-</div>
-</section>
-
-<section class="card result-card">
-<h3>Pré-visualização do Cartão</h3>
-<div class="canvas-wrapper"><canvas id="cartaoCanvas" width="1600" height="900"></canvas></div>
-<button class="primary-btn" onclick="baixarCartao()">Baixar Cartão em Alta Resolução (.PNG)</button>
-</section>
-
-<details class="card">
-<summary><b>Como usar & Glossário simples</b></summary>
-<div class="help-section">
-<h4>Como usar:</h4>
-<ol>
-<li><b>Preencha as informações:</b> Digite seu nome, profissão e contatos.</li>
-<li><b>Escolha seu ramo:</b> As cores profissionais aparecem sozinhas; faça ajuste fino se quiser.</li>
-<li><b>Ative o QR Code:</b> Quem escanear o cartão cai direto no seu WhatsApp.</li>
-<li><b>Baixe a arte:</b> Imagem em alta resolução, pronta para celular e impressão.</li>
-</ol>
-<hr>
-<h4>Glossário (Sua Identidade Visual):</h4>
-<ul>
-<li><b>Identidade Visual:</b> É o conjunto de cores e estilo que faz as pessoas lembrarem da sua empresa.</li>
-<li><b>Cor de Destaque:</b> Uma cor forte usada em detalhes (linhas, bordas) para chamar a atenção do cliente.</li>
-<li><b>QR Code:</b> Código quadrado que a câmera do celular lê e abre seu WhatsApp na hora.</li>
-<li><b>Contraste:</b> Diferença entre texto e fundo. Contraste baixo = cartão ilegível. O aviso amarelo te protege disso.</li>
-<li><b>Formato PNG:</b> Imagem de alta qualidade que não fica embaçada no celular nem na impressão.</li>
-<li><b>Memória local:</b> Seus dados ficam guardados neste aparelho. Pode fechar e voltar depois que tudo continua lá.</li>
-</ul>
-</div>
-</details>
+<aside class="preview-wrap">
+ <div class="preview-heading"><strong id="previewTitle">Pré-visualização · Digital</strong><span class="live">● Atualização em tempo real</span></div>
+ <div class="stage" id="digitalStage"><div id="cardPreview" class="card"></div></div>
+ <div class="print-preview" id="printPreview"></div>
+ <p class="preview-note">Teste os links após exportar o HTML. O rascunho fica armazenado neste navegador.</p>
+</aside>
 </main>
-</div>
-<div id="toast" class="toast"></div>
-<script src="app.js"></script>
-</body>
-</html>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const fields=['name','job','city','bio','font','layout','buttonStyle','whatsapp','phone','email','website','instagram','facebook','linkedin','maps','pix','message','backTitle','backText','backAddress','printSize','printBleed','customColor'];
+const palettes=[
+ {name:'Azul petróleo',bg:'#173e52',ink:'#ffffff',accent:'#b8d1dc'},
+ {name:'Grafite',bg:'#252b33',ink:'#ffffff',accent:'#c6ccd2'},
+ {name:'Verde profundo',bg:'#21483e',ink:'#ffffff',accent:'#c0d8cc'},
+ {name:'Vinho',bg:'#552c3b',ink:'#ffffff',accent:'#e2c5cf'},
+ {name:'Areia',bg:'#e9e1d3',ink:'#282b2c',accent:'#796b59'},
+ {name:'Branco',bg:'#ffffff',ink:'#172536',accent:'#245b72'}
+];
+let state={logo:'',palette:0,custom:false,tab:'digital'};
+let history=[],historyIndex=-1,historyLock=false,saveTimer;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const digits=s=>String(s||'').replace(/\D/g,'');
+const safeUrl=s=>{try{let u=new URL(/^https?:\/\//i.test(s)?s:'https://'+s);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}};
+function vals(){let o={};fields.forEach(id=>o[id]=$(id).value);return o}
+function theme(){if(state.custom)return {bg:$('customColor').value,ink:'#fff',accent:'#d6e3e8'};return palettes[state.palette]}
+function makeLinks(v){
+ let a=[];
+ const add=(id,label,href)=>{if(v[id]?.trim())a.push({label,href})};
+ if(v.whatsapp.trim())add('whatsapp','WhatsApp','https://wa.me/55'+digits(v.whatsapp).replace(/^55/,'')+(v.message.trim()?'?text='+encodeURIComponent(v.message):''));
+ if(v.phone.trim())add('phone','Ligar','tel:'+digits(v.phone));
+ if(v.email.trim())add('email','E-mail','mailto:'+v.email.trim());
+ if(v.website.trim())add('website','Site',safeUrl(v.website.trim()));
+ if(v.instagram.trim())add('instagram','Instagram',/^https?:/i.test(v.instagram)?safeUrl(v.instagram):'https://instagram.com/'+encodeURIComponent(v.instagram.replace(/^@/,'')));
+ if(v.facebook.trim())add('facebook','Facebook',safeUrl(v.facebook));
+ if(v.linkedin.trim())add('linkedin','LinkedIn',safeUrl(v.linkedin));
+ if(v.maps.trim())add('maps','Como chegar',safeUrl(v.maps));
+ if(v.pix.trim())a.push({label:'Copiar chave Pix',pix:v.pix.trim()});
+ return a;
+}
+function cardHTML(v,exported=false){
+ const t=theme(),links=makeLinks(v),radius=v.buttonStyle||'8px',font=v.font==='system'?'system-ui,-apple-system,"Segoe UI",sans-serif':v.font;
+ const logo=state.logo?`<div class="logo"><img src="${state.logo}" alt="Identidade visual"></div>`:`<div class="logo wordmark">${esc((v.name||'Sua marca').slice(0,2).toUpperCase())}</div>`;
+ const linkHtml=links.map(l=>l.pix?`<button class="card-action" type="button" data-pix="${esc(l.pix)}">${esc(l.label)}</button>`:`<a class="card-action" href="${esc(l.href)}" ${/^https?:/.test(l.href)?'target="_blank" rel="noopener noreferrer"':''}>${esc(l.label)}</a>`).join('');
+ const model=v.layout==='minimal'?'minimal':v.layout==='business'?'business':v.layout==='photo'?'photo':'classic';
+ return `<article class="card ${model}" style="--card-bg:${t.bg};--card-ink:${t.ink};--card-accent:${t.accent};--btn-radius:${radius};--card-font:${font}">${logo}<h2>${esc(v.name||'Nome ou empresa')}</h2>${v.job?`<div class="role">${esc(v.job)}</div>`:''}${v.city?`<div class="city">${esc(v.city)}</div>`:''}${v.bio?`<p class="bio">${esc(v.bio)}</p>`:''}<div class="card-actions">${linkHtml||'<span class="empty">Adicione seus contatos no editor</span>'}</div><div class="card-foot">CARTÃO DIGITAL</div></article>`;
+}
+function printHTML(v){
+ const t=theme();return `<div class="print-sheet"><section class="print-front" style="--card-bg:${t.bg};--card-ink:${t.ink};--card-accent:${t.accent}"><div class="print-logo">${state.logo?`<img src="${state.logo}" alt="Logotipo">`:`<strong>${esc((v.name||'CP').slice(0,2).toUpperCase())}</strong>`}</div><h2>${esc(v.name||'Nome ou empresa')}</h2><p>${esc(v.job||'')}</p><small>${esc(v.city||'')}</small></section><section class="print-back"><h3>${esc(v.backTitle||v.name||'Informações')}</h3><p>${esc(v.backText||v.bio||'')}</p>${v.backAddress?`<p><b>Endereço:</b> ${esc(v.backAddress)}</p>`:''}${v.email?`<p><b>E-mail:</b> ${esc(v.email)}</p>`:''}${v.phone?`<p><b>Telefone:</b> ${esc(v.phone)}</p>`:''}${v.website?`<p><b>Site:</b> ${esc(v.website)}</p>`:''}</section></div>`;
+}
+function render(){
+ const v=vals();$('cardPreview').innerHTML=cardHTML(v);$('cardPreview').style.fontFamily=v.font==='system'?'system-ui':v.font;
+ $('printPreview').innerHTML=printHTML(v);$('printPreview').dataset.size=v.printSize||'90x50';$('previewTitle').textContent=state.tab==='digital'?'Pré-visualização · Digital':'Pré-visualização · Impressão';
+ $('digitalStage').classList.toggle('hidden',state.tab==='print');$('printPreview').style.display=state.tab==='print'?'block':'none';
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));
+ document.querySelectorAll('.swatch').forEach((b,i)=>b.classList.toggle('active',i===state.palette&&!state.custom));
+}
+function snapshot(){return JSON.stringify({values:vals(),state:{...state}})}
+function restore(raw){try{let d=JSON.parse(raw);historyLock=true;fields.forEach(id=>{if(d.values&&d.values[id]!==undefined)$(id).value=d.values[id]});state={...state,...d.state};$('customColor').value=d.values.customColor||'#173e52';historyLock=false;render()}catch{}}
+function pushHistory(){if(historyLock)return;const s=snapshot();if(history[historyIndex]===s)return;history=history.slice(0,historyIndex+1);history.push(s);if(history.length>40)history.shift();historyIndex=history.length-1}
+function undo(dir){let n=historyIndex+dir;if(n<0||n>=history.length)return;historyIndex=n;restore(history[n]);}
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2300)}
+function saveDraft(){localStorage.setItem('cartaopronto_pro_draft',snapshot());$('saveStatus').textContent='Rascunho salvo';toast('Rascunho salvo neste navegador.')}
+function scheduleSave(){clearTimeout(saveTimer);$('saveStatus').textContent='Salvando…';saveTimer=setTimeout(()=>{localStorage.setItem('cartaopronto_pro_draft',snapshot());$('saveStatus').textContent='Salvo localmente'},500)}
+function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function buildExportDocument(v){
+ const body=cardHTML(v,true);
+ const css=`*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#eef1f3;display:grid;place-items:center;padding:22px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.card{position:relative;width:min(100%,390px);min-height:540px;padding:36px 27px 25px;border-radius:18px;background:var(--card-bg);color:var(--card-ink);display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 18px 40px #142a3a25;font-family:var(--card-font)}.card:before{content:"";height:5px;width:100%;background:var(--card-accent);position:absolute;top:0;left:0}.logo{width:90px;height:90px;border-radius:14px;border:1px solid #ffffff55;display:grid;place-items:center;overflow:hidden;margin:0 auto 17px;background:#ffffff12;font-weight:800}.logo img{width:100%;height:100%;object-fit:contain}.card h2{font-size:25px;margin:0 0 5px}.role,.city{font-size:13px;color:var(--card-accent)}.bio{font-size:12px;line-height:1.55;max-width:275px}.card-actions{width:100%;display:grid;gap:9px;margin:25px 0}.card-action{display:flex;justify-content:center;align-items:center;min-height:42px;padding:9px 12px;border:0;border-radius:var(--btn-radius);background:#fff;color:#172536;text-decoration:none;font-size:12px;font-weight:750;cursor:pointer}.card-foot{font-size:9px;opacity:.55;margin-top:auto;padding-top:24px}.empty{font-size:12px;opacity:.7}@media(max-width:480px){body{padding:0}.card{min-height:100vh;border-radius:0}}`;
+ const js=`document.addEventListener('click',async e=>{const b=e.target.closest('[data-pix]');if(!b)return;try{await navigator.clipboard.writeText(b.dataset.pix);b.textContent='Chave Pix copiada';}catch{prompt('Copie a chave Pix:',b.dataset.pix)}});`;
+ const doc='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Cartão digital de '+esc(v.name)+'"><title>'+esc(v.name||'Cartão digital')+'</title><style>'+css+'</style></head><body>'+body+'<script>'+js+'<\\/script></body></html>';
+ return doc;
+}
+function exportHTML(){const v=vals();download('cartao-digital.html',buildExportDocument(v),'text/html;charset=utf-8');toast('HTML independente exportado.');}
+function makeVcard(){const v=vals(),name=v.name||'Contato';const lines=['BEGIN:VCARD','VERSION:3.0','FN:'+name,'ORG:'+name];if(v.job)lines.push('TITLE:'+v.job);if(v.phone)lines.push('TEL;TYPE=CELL:'+v.phone);if(v.email)lines.push('EMAIL:'+v.email);if(v.website)lines.push('URL:'+safeUrl(v.website));if(v.city)lines.push('ADR;TYPE=WORK:;;'+v.city);lines.push('END:VCARD');download('contato.vcf',lines.join('\r\n'),'text/vcard;charset=utf-8')}
+async function share(){const v=vals();const html=buildExportDocument(v);const file=new File([html],'cartao-digital.html',{type:'text/html'});if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){try{await navigator.share({title:v.name||'Cartão digital',text:'Meu cartão digital',files:[file]})}catch(e){}}else{download('cartao-digital.html',html,'text/html;charset=utf-8');toast('Seu navegador não compartilha arquivos diretamente. O HTML foi baixado para você enviar.')}}
+function readImage(file){if(!file)return;if(file.size>5*1024*1024){toast('A imagem deve ter até 5 MB.');return}if(!['image/png','image/jpeg','image/webp','image/svg+xml'].includes(file.type)){toast('Formato não suportado. Use PNG, JPG, WEBP ou SVG.');return}const r=new FileReader();r.onload=()=>{state.logo=r.result;render();pushHistory();scheduleSave()};r.onerror=()=>toast('Não foi possível ler a imagem.');r.readAsDataURL(file)}
+$('palettes').innerHTML=palettes.map((p,i)=>`<button class="swatch" type="button" title="${p.name}" aria-label="${p.name}" data-palette="${i}" style="background:${p.bg}"></button>`).join('');
+$('palettes').addEventListener('click',e=>{const b=e.target.closest('[data-palette]');if(!b)return;state.palette=+b.dataset.palette;state.custom=false;render();pushHistory();scheduleSave()});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{state.tab=b.dataset.tab;render()}));
+$('logoFile').addEventListener('change',e=>readImage(e.target.files[0]));$('cameraFile').addEventListener('change',e=>readImage(e.target.files[0]));
+$('removeLogo').addEventListener('click',()=>{state.logo='';$('logoFile').value='';$('cameraFile').value='';render();pushHistory();scheduleSave()});
+fields.forEach(id=>$(id).addEventListener('input',()=>{if(id==='customColor')state.custom=true;render();pushHistory();scheduleSave()}));
+$('cardPreview').addEventListener('click',async e=>{const b=e.target.closest('[data-pix]');if(!b)return;try{await navigator.clipboard.writeText(b.dataset.pix);toast('Chave Pix copiada.')}catch{prompt('Copie a chave Pix:',b.dataset.pix)}});
+$('export').addEventListener('click',exportHTML);$('exportTop').addEventListener('click',exportHTML);$('vcard').addEventListener('click',makeVcard);$('share').addEventListener('click',share);
+$('print').addEventListener('click',()=>{state.tab='print';render();setTimeout(()=>window.print(),100)});
+$('saveDraft').addEventListener('click',saveDraft);$('undo').addEventListener('click',()=>undo(-1));$('redo').addEventListener('click',()=>undo(1));
+$('clear').addEventListener('click',()=>{if(!confirm('Criar um novo cartão? Os dados atuais serão substituídos.'))return;fields.forEach(id=>$(id).value='');state={logo:'',palette:0,custom:false,tab:'digital'};render();pushHistory();saveDraft()});
+const old=localStorage.getItem('cartaopronto_pro_draft');if(old)restore(old);pushHistory();render();
+})();
+</script>
+</body></html>
